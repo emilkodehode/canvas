@@ -98,14 +98,14 @@ function class object thing??? epxand polymoprh inerhit this, i can do that righ
 everything needs an ID, transform, color. rewrite to a proper BASE class thing
 */
 function rectangle(id, x, y, width, height, areaSize) {
-        //feels kind of backwards x y only ends up telling where it is
-        //while width and height is for the finer details
-        this.id = id;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.areaSize = areaSize;
+    //feels kind of backwards x y only ends up telling where it is
+    //while width and height is for the finer details
+    this.id = id;
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.areaSize = areaSize;
     this.render = () => {
         //origin set to middle middle is x y
         saveO(this.x,this.y);
@@ -130,14 +130,14 @@ function rectangle(id, x, y, width, height, areaSize) {
     let ax = (this.width / 2) * areaSize;
     let ay = (this.height / 2) * areaSize;
     this.areaVerts = [
-        [-ax / 2.5, ay],
+        //[-ax / 2.5, ay],
         [ax / 2.5, ay],
         [ax, ay / 2.5],
-        [ax, -ay / 2.5],
-        [ax / 2.5, -ay],
+        //[ax, -ay / 2.5],
+        //[ax / 2.5, -ay],
         [-ax / 2.5, -ay],
         [-ax, -ay / 2.5],
-        [-ax, ay / 2.5]
+        //[-ax, ay / 2.5]
     ]
     this.area = () => {
         saveO(this.x,this.y);
@@ -148,40 +148,47 @@ function rectangle(id, x, y, width, height, areaSize) {
         ctx.lineTo(this.areaVerts[1][0], this.areaVerts[1][1]);
         ctx.lineTo(this.areaVerts[2][0], this.areaVerts[2][1]);
         ctx.lineTo(this.areaVerts[3][0], this.areaVerts[3][1]);
-        ctx.lineTo(this.areaVerts[4][0], this.areaVerts[4][1]);
-        ctx.lineTo(this.areaVerts[5][0], this.areaVerts[5][1]);
-        ctx.lineTo(this.areaVerts[6][0], this.areaVerts[6][1]);
-        ctx.lineTo(this.areaVerts[7][0], this.areaVerts[7][1]);
+        //ctx.lineTo(this.areaVerts[4][0], this.areaVerts[4][1]);
+        //ctx.lineTo(this.areaVerts[5][0], this.areaVerts[5][1]);
+        //ctx.lineTo(this.areaVerts[6][0], this.areaVerts[6][1]);
+        //ctx.lineTo(this.areaVerts[7][0], this.areaVerts[7][1]);
         ctx.lineTo(this.areaVerts[0][0], this.areaVerts[0][1]);
         ctx.stroke();
         ctx.restore();
     }
+    this.targets = [];
     this.areaCheck = () => {
         /*
-        im inside a rectangle when cursor pos is greater and less than the 4 corner of the box
-        i have 8 verts now, check all eight or a combination of each box
-        difference is one HUGE check or nested checks or 4 checks with potential
-        check everyone that is O*O
-        for now only need to check when i handle click
-        this gets called on everyone
-        area is local to this unit convert to canvas itself
-        add this x to find out ofc
-
-        8 check loop through list with 4 spaces between
-        i need ofsett of 1 and 5
+        finding edge cases and preventing it from agreeing when i dont want to
+        gonna try to just have 2 squares and then rotate one square if it is inside both it is true
         */
-        let smalloff = undefined
-        let bigoff = undefined
-        for (let i = 0; i < rectArray.length - 1; i++){
-            smalloff = i + 1
-            bigoff = i + 5
-            if(smalloff)
-            //console.log(`${rectArray[i].id} arr y ` + rectArray[i].y,"pure y " + this.y, "this y bot" + (this.y + this.areaVerts[0][1]), "this y top" + (this.y + this.areaVerts[5][1]));
-            if((rectArray[i].y <= (this.y + this.areaVerts[i][1]) && rectArray[i].y >= (this.y + this.areaVerts[i+bigoff][1]))){  
-                if((rectArray[i].x >= (this.y + this.areaVerts[i][0]) && rectArray[i].x <= (this.x + this.areaVerts[i+smalloff][0]))){
-                    console.log("yes")
+        for (let j = 0; j < rectArray.length - 1; j++){
+            let countx = 0
+            let county = 0
+            for (let i = 0; i < 2; i++){
+                let offset = i + 2;
+                if(offset >= 3){
+                    offset -= 3;
+                }
+                let smallx = Math.min(this.x + this.areaVerts[i][0], this.x + this.areaVerts[offset][0]);
+                let bigx = Math.max(this.x + this.areaVerts[i][0], this.x + this.areaVerts[offset][0]);
+                let smally = Math.min(this.y + this.areaVerts[i][1], this.y + this.areaVerts[offset][1]);
+                let bigy = Math.max(this.y + this.areaVerts[i][1], this.y + this.areaVerts[offset][1]);
+                if((rectArray[j].x >= smallx) && (rectArray[j].x <= bigx)){  
+                    if((rectArray[j].y >= smally) && (rectArray[j].y <= bigy)){
+                        console.log("inside");
+                    }
                 }
             }
+            //console.log(countx, "x");
+            //console.log(county, "y");
+            if (countx > 4) {
+                //console.log("inside");
+                //this.targets.push([rectArray[j].x, rectArray[j].y])
+            }
+            countx = 0
+            county = 0
+
         }
     }
 }
